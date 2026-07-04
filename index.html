@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google AdSense & Ads UI Sandbox</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for Roboto and Google Sans style -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Google+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Roboto', 'Google Sans', sans-serif;
+    }
+
+    /* Google Ads custom font spec alignment matching image_af0363.png */
+    .google-ads-font {
+      font-family: Roboto, Arial, sans-serif;
+    }
+
+    #previewAdName {
+      color: #8A8A8A !important;
+    }
+
+    .text-shadow-sm {
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Hide scrollbar for clean dashboard panels */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Custom Transitions */
+    .theme-transition {
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    }
+  </style>
+</head>
+
+<body class="bg-[#f8f9fa] text-gray-900 theme-transition min-h-screen flex flex-col">
+
+  <!-- Simple Flat Google-Style Login Container -->
+  <div id="loginScreen"
+    class="flex-1 flex flex-col items-center justify-center p-4 bg-[#f8f9fa] dark:bg-slate-900 theme-transition z-50">
+    <div
+      class="w-full max-w-[400px] bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-8 shadow-sm theme-transition">
+      <!-- Branding header inside login -->
+      <div class="flex flex-col items-center mb-6">
+        <div class="flex items-center gap-0.5 mb-2">
+          <div class="w-3.5 h-7 bg-[#f9ab00] rounded-sm transform -skew-x-12"></div>
+          <div class="w-3.5 h-3.5 bg-[#4285f4] rounded-full"></div>
+        </div>
+        <h1 class="text-xl font-medium tracking-tight text-gray-800 dark:text-zinc-100 font-sans">
+          Sign in to AdSense Live Sync
+        </h1>
+        <p class="text-xs text-gray-500 dark:text-zinc-400 mt-1">Access the live dashboard sandbox workspace</p>
+      </div>
+
+      <!-- Authentication feedback alert -->
+      <div id="loginFeedback"
+        class="hidden p-3 mb-4 text-xs text-red-700 bg-red-50 dark:bg-red-950/20 dark:text-red-400 border border-red-100 dark:border-red-900/30 rounded-lg">
+        Incorrect username or password. Please try again.
+      </div>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label for="usernameInput"
+            class="block text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wide mb-1.5">Username</label>
+          <input type="text" id="usernameInput" required
+            class="w-full text-sm px-3.5 py-2.5 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-sans"
+            placeholder="Enter username">
+        </div>
+
+        <div>
+          <label for="passwordInput"
+            class="block text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wide mb-1.5">Password</label>
+          <input type="password" id="passwordInput" required
+            class="w-full text-sm px-3.5 py-2.5 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-sans"
+            placeholder="Enter password">
+        </div>
+
+        <button type="submit"
+          class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm tracking-wide transition-all shadow-sm">
+          Next
+        </button>
+      </form>
+
+      <!-- Access Hints -->
+
+    </div>
+  </div>
+
+  <!-- Main Sandbox Workspace Shell (Hidden until authorized) -->
+  <div id="mainWorkspace" class="hidden flex-1 flex flex-col">
+    <header
+      class="bg-white border-b border-gray-200 px-4 py-2.5 flex items-center justify-between shadow-sm z-30 theme-transition"
+      id="mainHeader">
+      <div class="flex items-center gap-3">
+        <!-- Google AdSense Logo Branding -->
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-0.5">
+            <div class="w-3.5 h-7 bg-[#f9ab00] rounded-sm transform -skew-x-12"></div>
+            <div class="w-3.5 h-3.5 bg-[#4285f4] rounded-full"></div>
+          </div>
+          <span class="text-[20px] font-medium tracking-tight text-[#5f6368] font-sans flex items-center gap-1.5"
+            id="brandText">
+            AdSense <span
+              class="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 font-semibold px-2 py-0.5 rounded-full ml-1">Live
+              Sync</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Search and Actions Bar -->
+      <div class="flex items-center gap-4">
+        <!-- Dark Mode Switcher -->
+        <button id="themeToggle"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-medium hover:bg-gray-100 transition theme-transition">
+          <svg id="sunIcon" class="w-4 h-4 text-amber-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+          </svg>
+          <svg id="moonIcon" class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+          <span id="themeText" class="font-semibold text-gray-700">Dark Mode</span>
+        </button>
+
+        <button id="resetBtn"
+          class="px-3 py-1.5 text-xs text-red-600 font-bold hover:bg-red-50 rounded-lg transition border border-transparent hover:border-red-200">
+          Reset Workspace
+        </button>
+
+        <button id="logoutBtn"
+          class="px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition border border-gray-300">
+          Sign Out
+        </button>
+
+        <!-- Profile Avatar Placeholder -->
+        <div
+          class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+          A
+        </div>
+      </div>
+    </header>
+
+    <div class="flex flex-1">
+      <main
+        class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-y-auto h-[calc(100vh-64px)]">
+
+        <!-- Left Workspace: All Writable Controls Panel (5 cols) -->
+        <section id="configPanel"
+          class="lg:col-span-5 bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-5 transition-colors duration-300 max-h-[85vh] overflow-y-auto no-scrollbar theme-transition">
+          <div>
+            <h2 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-1" id="configHeading">Configuration
+              Board</h2>
+            <p class="text-xs text-gray-500" id="configSubheading">Submit any YouTube link. The video title will
+              automatically populate the description and remains fully editable.</p>
+          </div>
+
+          <!-- YOUTUBE LINK SUBMISSION BOX WITH AUTO-FETCH INDICATOR -->
+          <div
+            class="bg-red-50/50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 p-4 rounded-xl space-y-3">
+            <div class="flex items-center justify-between">
+              <label
+                class="text-xs font-bold text-red-700 dark:text-red-400 uppercase tracking-wider flex items-center gap-1.5">
+                <svg class="w-4 h-4 fill-current text-red-600" viewBox="0 0 24 24">
+                  <path
+                    d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.108C19.522 3.54 12 3.54 12 3.54s-7.522 0-9.388.515a3.003 3.003 0 0 0-2.11 2.108C0 8.029 0 12 0 12s0 3.971.502 5.837a3.003 3.003 0 0 0 2.11 2.108C4.478 20.46 12 20.46 12 20.46s7.522 0 9.388-.515a3.003 3.003 0 0 0 2.11-2.108C24 15.971 24 12 24 12s0-3.971-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+                Active YouTube Link Submitter
+              </label>
+              <!-- Fetch Status Badge -->
+              <div id="fetchStatusBadge"
+                class="flex items-center gap-1 text-[10px] font-bold text-gray-500 bg-gray-100 dark:bg-zinc-800 dark:text-zinc-400 px-2 py-0.5 rounded-full">
+                <span class="w-1.5 h-1.5 rounded-full bg-gray-400" id="fetchStatusIndicator"></span>
+                <span id="fetchStatusText">Idle</span>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex gap-2">
+                <input type="text" id="inputYoutubeId"
+                  class="flex-1 text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition font-mono dark:bg-zinc-800 dark:border-zinc-700"
+                  value="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                <button id="btnForceFetch"
+                  class="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-bold transition flex items-center justify-center gap-1 shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 15H19.2" />
+                  </svg>
+                  Sync
+                </button>
+              </div>
+              <p class="text-[10px] text-gray-400">Pasting a link queries the oEmbed metadata API to safely import the
+                official title.</p>
+            </div>
+          </div>
+
+          <!-- TEMPLATE SWITCHER TABS FOR WORKSPACE PREVIEWS -->
+          <div class="bg-gray-100/80 dark:bg-zinc-800/80 p-2 rounded-xl space-y-2">
+            <span
+              class="text-[10px] font-bold text-gray-400 dark:text-zinc-500 px-1 uppercase tracking-wider block">Workspace
+              Dashboard Preview Toggle</span>
+            <div
+              class="flex gap-1 bg-white dark:bg-zinc-900 p-0.5 rounded-lg border border-gray-200 dark:border-zinc-800">
+              <button id="btnSelectYoutube"
+                class="flex-1 py-1.5 text-[11px] font-bold rounded transition bg-blue-50 text-blue-700 dark:bg-zinc-700 dark:text-blue-400">
+                Template 1 (Landscape Standard)
+              </button>
+              <button id="btnSelectSplitVideo"
+                class="flex-1 py-1.5 text-[11px] font-bold rounded transition text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800">
+                Template 2 (Portrait Split)
+              </button>
+            </div>
+          </div>
+
+          <!-- SECTION 1: HEADER & AD CARD LABELS -->
+          <div class="border-t border-gray-100 dark:border-zinc-700 pt-4 space-y-3">
+            <h3 class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Card Branding & Text
+            </h3>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Card Header
+                  Title</label>
+                <input type="text" id="inputHeaderLabel"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="Video ads">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Card Footer
+                  Link</label>
+                <input type="text" id="inputFooterLabel"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="Video ads">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Campaign Link
+                Text</label>
+              <input type="text" id="inputCampaignName"
+                class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700 font-medium"
+                value="Video views - 2025-12-13">
+            </div>
+
+            <!-- DYNAMIC AD TEXT SETUP -->
+            <div
+              class="bg-blue-50/40 dark:bg-blue-950/10 border border-blue-100/60 dark:border-blue-900/20 p-3.5 rounded-xl space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold text-blue-800 dark:text-blue-300 uppercase tracking-wide">Ad
+                  Metadata</span>
+                <span class="text-[10px] text-blue-500 font-medium flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                  Fully Editable
+                </span>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Ad ID (Header
+                  Row)</label>
+                <input type="text" id="inputAdName"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700 font-medium"
+                  value="Ad #1">
+                <p class="text-[10px] text-gray-400 mt-1">Stays "Ad #1" by default, matching image_af0363.png perfectly.
+                </p>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Description
+                  (Next to Thumbnail)</label>
+                <textarea id="inputAdDesc" rows="2"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700 resize-none font-sans"
+                  placeholder="Enter custom ad description...">enjoy the video</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: AD SENSE INTELLIGENT METRICS & AUTOMATION BOARD -->
+          <div class="border-t border-gray-100 dark:border-zinc-700 pt-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Metrics & Table
+                Fields</h3>
+              <span
+                class="text-[10px] bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Auto-Calc
+                ON</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Ad Column
+                  Label</label>
+                <input type="text" id="inputStatusLabel"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="Enabled">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Status Column
+                  Label</label>
+                <input type="text" id="inputEligibleLabel"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="Eligible">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Col 4 Header
+                  Title</label>
+                <input type="text" id="inputCol4Header"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="TrueView v...">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Col 5 Header
+                  Title</label>
+                <input type="text" id="inputCol5Header"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="View rate">
+              </div>
+            </div>
+
+            <!-- PRIMARY METRIC DATA CHANNELS -->
+            <div
+              class="grid grid-cols-3 gap-3 bg-gray-50 dark:bg-zinc-800/40 p-2.5 rounded-xl border border-gray-100 dark:border-zinc-800">
+              <div>
+                <label
+                  class="block text-[9px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Impressions</label>
+                <input type="text" id="inputImpressionsVal"
+                  class="w-full text-xs px-2 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="6,270">
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Views</label>
+                <input type="text" id="inputViewsVal"
+                  class="w-full text-xs px-2 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="3,119">
+              </div>
+              <div>
+                <label class="block text-[9px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Avg. CPV
+                  ($)</label>
+                <input type="text" id="inputAvgCPVVal"
+                  class="w-full text-xs px-2 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="$0.01">
+              </div>
+            </div>
+
+            <!-- AUTOMATIC AND MANUALLY OVERRIDABLE AD SENSE FORMULAS -->
+            <div
+              class="grid grid-cols-2 gap-4 bg-blue-50/30 dark:bg-zinc-800/20 p-3 rounded-xl border border-blue-100/40 dark:border-zinc-700/50">
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <label class="block text-[10px] font-bold text-blue-800 dark:text-blue-300 uppercase">View
+                    Rate</label>
+                  <span class="text-[8px] text-gray-400 font-semibold">Editable</span>
+                </div>
+                <input type="text" id="inputViewRateVal"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="49.74%">
+                <p class="text-[9px] text-gray-400 mt-1">Calculated: Views / Impressions</p>
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1">
+                  <label class="block text-[10px] font-bold text-blue-800 dark:text-blue-300 uppercase">Total
+                    Spend</label>
+                  <span class="text-[8px] text-gray-400 font-semibold">Editable</span>
+                </div>
+                <input type="text" id="inputCostVal"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="$31.19">
+                <p class="text-[9px] text-gray-400 mt-1">Calculated: Views × Avg. CPV</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Pagination
+                  String</label>
+                <input type="text" id="inputPaginationText"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-zinc-800 dark:border-zinc-700"
+                  value="1 / 1">
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-gray-500 dark:text-zinc-400 uppercase mb-1">Ad Status
+                  Dot</label>
+                <select id="inputStatusDot"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white transition dark:bg-zinc-800 dark:border-zinc-700">
+                  <option value="Enabled" selected>Green Dot (Enabled)</option>
+                  <option value="Paused">Gray Dot (Paused)</option>
+                  <option value="Removed">Red Dot (Removed)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: PORTRAIT VIDEO DIALOG OVERLAYS -->
+          <div id="splitScreenControls" class="border-t border-gray-100 dark:border-zinc-700 pt-4 space-y-3 hidden">
+            <h3 class="text-xs font-bold text-gray-700 dark:text-zinc-300 uppercase tracking-wider">Video Dialog
+              Overlays (Template 2 Only)</h3>
+            <div class="space-y-2">
+              <div>
+                <label class="block text-[10px] font-semibold text-gray-500 dark:text-zinc-400 uppercase mb-0.5">Top
+                  Caption line</label>
+                <input type="text" id="inputCaptionTop"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded dark:bg-zinc-800 dark:border-zinc-700"
+                  value="AND I JUST WANT">
+              </div>
+              <div>
+                <label class="block text-[10px] font-semibold text-gray-500 dark:text-zinc-400 uppercase mb-0.5">Bottom
+                  Caption line</label>
+                <input type="text" id="inputCaptionBottom"
+                  class="w-full text-xs px-3 py-2 border border-gray-300 rounded dark:bg-zinc-800 dark:border-zinc-700"
+                  value="TO BE BETTER">
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[10px] font-semibold text-gray-500 dark:text-zinc-400 uppercase mb-0.5">Time
+                    Code badge</label>
+                  <input type="text" id="inputVideoTimer"
+                    class="w-full text-xs px-3 py-2 border border-gray-300 rounded font-mono dark:bg-zinc-800 dark:border-zinc-700"
+                    value="00:52">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-semibold text-gray-500 dark:text-zinc-400 uppercase mb-0.5">Skip
+                    CTA label</label>
+                  <input type="text" id="inputSkipText"
+                    class="w-full text-xs px-3 py-2 border border-gray-300 rounded dark:bg-zinc-800 dark:border-zinc-700"
+                    value="Skip Ad">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right Workspace: High-Fidelity Google Ads Preview Area (7 cols) -->
+        <section class="lg:col-span-7 flex flex-col items-center justify-start py-4 lg:px-4 space-y-6">
+
+          <!-- Header status metrics row -->
+          <div class="w-full max-w-[422px] flex items-center justify-between px-2">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider" id="previewStatusLabel">Live Sandbox
+              Preview</span>
+            <span class="text-xs text-gray-500 flex items-center gap-1 font-semibold">
+              <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Google AdSense
+              Validated
+            </span>
+          </div>
+
+          <!-- MOCK PREVIEW CONTAINER: GOOGLE ADS WIDGET CARD (100% SCREENSHOT ALIGNED COPY) -->
+          <div id="googleAdsCard"
+            class="google-ads-font w-full max-w-[422px] bg-white border border-gray-200 rounded-[8px] shadow-sm flex flex-col select-none transition-all duration-300 hover:shadow-md theme-transition">
+
+            <!-- CARD HEADER: Exact Match to image_af0363.png -->
+            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200" id="cardHeader">
+              <div class="flex items-center gap-2">
+                <!-- Using verbatim provided asset "Icon png (1).png" -->
+                <img src="Icon png (1).png" class="w-[18px] h-[18px] object-contain transition-all duration-300"
+                  id="videoAdsIcon" alt="Video Ads" />
+                <span class="text-[13px] font-normal text-gray-600 font-sans tracking-wide select-none"
+                  id="labelVideoAds">Video ads</span>
+              </div>
+              <!-- Vertical Kebab Menu Icon -->
+              <button class="p-1.5 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition text-gray-400">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- CARD BODY -->
+            <div class="p-4 pb-1.5 flex-initial h-fit">
+
+              <!-- Campaign Link Title -->
+              <div class="flex items-center gap-[7px] mb-2.5">
+                <span id="campaignDot" class="w-[7px] h-[7px] rounded-full bg-[#1e8e3e] inline-block"></span>
+                <a href="#" target="_blank" id="previewCampaignName"
+                  class="text-[13px] font-normal text-[#1a73e8] hover:underline tracking-tight">Video views -
+                  2025-12-13</a>
+              </div>
+
+              <!-- Video Thumbnail and Description Block -->
+              <div class="flex gap-4 items-start mb-2">
+
+                <!-- THUMBNAIL DISPLAY AREA (Fits standard YouTube viewport correctly, tuned smaller size) -->
+                <div id="videoThumbnailWrapper"
+                  class="w-[168px] h-[95px]  border border-gray-100 dark:border-zinc-800 relative overflow-hidden flex-shrink-0 bg-neutral-950 flex shadow-sm">
+
+                  <!-- Left blurred margin mirror (Hidden in standard Template 1) -->
+                  <div id="mirrorLeft"
+                    class="w-[20%] h-full opacity-35 filter blur-[3px] scale-110 relative bg-neutral-800 overflow-hidden hidden">
+                    <img id="bgMirrorLeft" class="absolute w-full h-full object-cover animate-pulse" src=""
+                      alt="Left mirror view">
+                  </div>
+
+                  <!-- Center Active Column (Fetches dynamic YouTube thumbnail) -->
+                  <div class="flex-1 h-full relative bg-[#1c1d1f] flex flex-col justify-between overflow-hidden"
+                    id="centerCol">
+                    <img id="youtubeThumbnailImg" class="absolute inset-0 w-full h-full object-cover hidden" src=""
+                      alt="YouTube Video Thumbnail" />
+
+                    <!-- Fallback placeholder while thumbnail image loads or if it fails -->
+                    <div id="youtubeFallbackPlaceholder"
+                      class="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 text-zinc-500">
+                      <svg class="w-6 h-6 mb-1 text-zinc-600 animate-pulse" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                        </path>
+                      </svg>
+                      <span class="text-[8px] font-medium tracking-tight">Loading Video...</span>
+                    </div>
+
+                    <!-- Real-time Text Subtitle tracks overlay (Only for Template 2) -->
+                    <div id="subtitlesOverlay"
+                      class="absolute bottom-2.5 inset-x-0 text-center leading-[1.05] z-20 px-0.5 scale-[0.82] origin-bottom select-none hidden">
+                      <span id="previewCaptionTop"
+                        class="text-[6.5px] text-white font-extrabold uppercase tracking-tight text-shadow-sm block">AND
+                        I JUST WANT</span>
+                      <span id="previewCaptionBottom"
+                        class="text-[7px] text-cyan-400 font-extrabold uppercase tracking-tight text-shadow-sm block mt-0.5">TO
+                        BE BETTER</span>
+                    </div>
+                  </div>
+
+                  <!-- Right blurred margin mirror (Hidden in standard Template 1) -->
+                  <div id="mirrorRight"
+                    class="w-[20%] h-full opacity-35 filter blur-[3px] scale-110 relative bg-neutral-800 overflow-hidden hidden">
+                    <img id="bgMirrorRight" class="absolute w-full h-full object-cover" src="" alt="Right mirror view">
+                  </div>
+
+                  <!-- INTERACTIVE PORTRAIT DISPLAY OVERLAYS (Only for Template 2) -->
+                  <!-- Skip Ad Action Button -->
+                  <div id="skipOverlay"
+                    class="absolute bottom-[22px] right-0 bg-black/90 border-l border-t border-b border-zinc-700 text-white font-medium pl-2 pr-1 py-0.5 flex items-center gap-1 z-30 shadow-md transform scale-90 origin-right select-none hidden">
+                    <span id="previewSkipText" class="text-[7.5px] font-sans tracking-wide leading-none">Skip Ad</span>
+                    <svg class="w-2.5 h-2.5 text-white fill-current" viewBox="0 0 24 24">
+                      <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                    </svg>
+                  </div>
+
+                  <!-- Time Counter Indicator Badge -->
+                  <div id="timerOverlay"
+                    class="absolute bottom-1 right-1 bg-black/85 px-1 py-0.5 rounded border border-neutral-700/50 text-[6.5px] text-white font-mono leading-none z-30 shadow-xs select-none hidden">
+                    <span id="previewVideoTimer">00:52</span>
+                  </div>
+                </div>
+
+                <!-- Ad ID and Title/Description Layout -->
+                <div class="flex-1 min-w-0 self-start pt-0.5">
+                  <!-- Ad ID - Stays bold and distinct -->
+                  <div id="previewAdName"
+                    class="text-[13px] font-medium text-gray-900 dark:text-zinc-100 tracking-tight leading-snug">
+                    Ad #1
+                  </div>
+                  <!-- Ad Description -->
+                  <div id="previewAdDesc"
+                    class="text-[13px] text-gray-500 dark:text-zinc-400 font-sans tracking-wide leading-normal mt-0.5 break-words font-normal">
+                    enjoy the video
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- DATA METRICS TABLE (Proportional metrics columns gap fixing based on custom layout proportions) -->
+              <div class="pt-1 pb-0 mt-1">
+
+                <!-- Headers row (Proportional custom fractions that resolve gap issues for Column 5) -->
+                <div
+                  class="grid grid-cols-[1.2fr_1fr_1.2fr_1.5fr_1.1fr] gap-x-4 gap-y-1 text-[12px] font-normal text-[#70757a] tracking-tight"
+                  id="metricsHeaders">
+                  <div class="text-left font-normal whitespace-nowrap">Ad</div>
+                  <div class="text-left font-normal whitespace-nowrap">Status</div>
+                  <div class="text-left font-normal whitespace-nowrap">Impressions</div>
+
+                  <!-- Column 4 Dynamic header with continuous underline and custom dropdown arrow Icon png file (1).png -->
+                  <div>
+                    <div
+                      class="text-left inline-flex items-center gap-1.5 cursor-pointer hover:text-gray-700 dark:hover:text-zinc-300 transition shrink-0 select-none pb-[1px] border-b border-gray-400 dark:border-zinc-600 w-fit whitespace-nowrap">
+                      <span id="headerCol4" class="text-[#70757a] whitespace-nowrap">TrueView v...</span>
+                      <img src="Icon png file (1).png" class="w-[8px] h-[4px] object-contain shrink-0"
+                        alt="Dropdown Arrow" />
+                    </div>
+                  </div>
+
+                  <!-- Column 5 Dynamic header aligned perfectly to the left (Continuous underline now spans text and custom dropdown icon) -->
+                  <div>
+                    <div
+                      class="text-left inline-flex items-center gap-1.5 cursor-pointer hover:text-gray-700 dark:hover:text-zinc-300 transition shrink-0 select-none pb-[1px] border-b border-gray-400 dark:border-zinc-600 w-fit whitespace-nowrap">
+                      <span id="headerCol5" class="text-[#70757a] whitespace-nowrap">View rate</span>
+                      <img src="Icon png file (1).png" class="w-[8px] h-[4px] object-contain shrink-0"
+                        alt="Dropdown Arrow" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Values Row (Perfectly synchronized custom column proportions ensuring zero overlapping or bad gaps) -->
+                <div
+                  class="grid grid-cols-[1.2fr_1fr_1.2fr_1.5fr_1.1fr] gap-x-4 gap-y-1 text-[13px] font-normal text-[#202124] mt-2 font-normal"
+                  id="metricsValues">
+                  <!-- Ad Enabled status dot and label (Ensured full text visibility) -->
+                  <div class="flex items-center gap-[7px] min-w-0">
+                    <span id="statusCircle" class="w-[7px] h-[7px] rounded-full bg-[#1e8e3e] flex-shrink-0"></span>
+                    <span id="previewStatus" class="whitespace-nowrap font-normal dark:text-zinc-200">Enabled</span>
+                  </div>
+
+                  <div id="previewEligible" class="text-gray-800 dark:text-zinc-300 font-normal whitespace-nowrap">
+                    Eligible</div>
+                  <div id="previewImpressions" class="text-left font-normal dark:text-zinc-200 whitespace-nowrap">6,270
+                  </div>
+                  <div id="previewViews" class="text-left font-normal dark:text-zinc-200 whitespace-nowrap">3,119</div>
+                  <!-- Column 5 left-aligned matching standard specs with fixed gap -->
+                  <div id="previewCol5Value" class="text-left font-normal dark:text-zinc-200 whitespace-nowrap">49.74%
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- CARD FOOTER -->
+            <div
+              class="flex items-center justify-between px-4 py-2 border-t border-gray-200 dark:border-zinc-800 text-xs bg-white dark:bg-zinc-950 transition-colors duration-300 rounded-b-[8px] theme-transition"
+              id="cardFooter">
+              <a href="#" target="_blank" id="footerVideoAdsLink"
+                class="text-[#1a73e8] dark:text-blue-400 font-normal hover:underline text-[13px] whitespace-nowrap">Video
+                ads</a>
+
+              <!-- Pagination selector with exact light grey chevron elements with color #c4c7c5 -->
+              <div class="flex items-center gap-3 select-none">
+                <span class="text-[#c4c7c5] font-semibold text-[13px] cursor-pointer hover:text-gray-500">&lt;</span>
+                <span
+                  class="text-gray-600 dark:text-zinc-400 font-normal text-[12px] min-w-[32px] text-center whitespace-nowrap"
+                  id="paginationIndicator">1 / 1</span>
+                <span class="text-[#c4c7c5] font-semibold text-[13px] cursor-pointer hover:text-gray-500">&gt;</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Dynamic Diagnostics Info message bar -->
+          <div
+            class="w-full max-w-[422px] bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 rounded-lg p-3 text-xs text-blue-800 dark:text-blue-300 flex items-start gap-2.5 transition-colors duration-300"
+            id="infoPanel">
+            <svg class="w-4 h-4 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p class="font-bold mb-0.5" id="infoTitle">Active Live Video Synced Preview</p>
+              <ul class="list-disc pl-4 space-y-0.5 font-medium" id="infoList">
+                <li><strong>Live Video Link Active:</strong> Pasting a link queries the API to sync metadata. Only this
+                  live-synced video thumbnail is displayed.</li>
+                <li><strong>Perfect Alignment Matching image_af0363.png:</strong> Continuous underlines running
+                  underneath both header texts and dropdown icons.</li>
+              </ul>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Interactive JavaScript -->
+  <script>
+    // JSON Database storing username & password credentials (Verbatim Database simulation)
+    const USER_DATABASE_JSON = `[
+      { "username": "admin", "password": "password123" },
+      { "username": "google", "password": "password" }
+    ]`;
+
+    const userCredentials = JSON.parse(USER_DATABASE_JSON);
+
+    // Authentication Elements
+    const loginScreen = document.getElementById('loginScreen');
+    const mainWorkspace = document.getElementById('mainWorkspace');
+    const loginForm = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('usernameInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const loginFeedback = document.getElementById('loginFeedback');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // Handle authentication form submission
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const enteredUsername = usernameInput.value.trim();
+      const enteredPassword = passwordInput.value;
+
+      // Scan dynamic JSON database
+      const matchFound = userCredentials.some(user => user.username === enteredUsername && user.password === enteredPassword);
+
+      if (matchFound) {
+        // Correct authorization - hide login, trigger main workspace transition
+        loginFeedback.classList.add('hidden');
+        loginScreen.classList.add('hidden');
+        mainWorkspace.classList.remove('hidden');
+        // Cache session status so refreshes inside layout editor stay persistent
+        sessionStorage.setItem('adsense_authorized', 'true');
+        updateLivePreview();
+      } else {
+        // Validation error
+        loginFeedback.classList.remove('hidden');
+        passwordInput.value = '';
+      }
+    });
+
+    // Check cached authorization
+    if (sessionStorage.getItem('adsense_authorized') === 'true') {
+      loginScreen.classList.add('hidden');
+      mainWorkspace.classList.remove('hidden');
+    }
+
+    // Sign out routine
+    logoutBtn.addEventListener('click', function () {
+      sessionStorage.removeItem('adsense_authorized');
+      mainWorkspace.classList.add('hidden');
+      loginScreen.classList.remove('hidden');
+      usernameInput.value = '';
+      passwordInput.value = '';
+    });
+
+    // State Tracking
+    let activeTemplate = "youtube"; // "youtube" (Template 1 Landscape) or "split" (Template 2 Portrait)
+    let fetchDebounceTimer = null;
+    let isCalculating = false; // Guard to prevent infinite recursion during calculation loops
+
+    // Elements - Branding & Text Inputs
+    const inputHeaderLabel = document.getElementById('inputHeaderLabel');
+    const inputFooterLabel = document.getElementById('inputFooterLabel');
+    const inputCampaignName = document.getElementById('inputCampaignName');
+    const inputAdName = document.getElementById('inputAdName');
+    const inputAdDesc = document.getElementById('inputAdDesc');
+
+    // Elements - Metrics Table & Mathematical Inputs
+    const inputStatusLabel = document.getElementById('inputStatusLabel');
+    const inputEligibleLabel = document.getElementById('inputEligibleLabel');
+    const inputCol4Header = document.getElementById('inputCol4Header');
+    const inputCol5Header = document.getElementById('inputCol5Header');
+    const inputImpressionsVal = document.getElementById('inputImpressionsVal');
+    const inputViewsVal = document.getElementById('inputViewsVal');
+    const inputAvgCPVVal = document.getElementById('inputAvgCPVVal');
+    const inputViewRateVal = document.getElementById('inputViewRateVal');
+    const inputCostVal = document.getElementById('inputCostVal');
+    const inputPaginationText = document.getElementById('inputPaginationText');
+    const inputStatusDot = document.getElementById('inputStatusDot');
+    const inputYoutubeId = document.getElementById('inputYoutubeId');
+    const btnForceFetch = document.getElementById('btnForceFetch');
+
+    // Dialogue Overlay Inputs
+    const inputCaptionTop = document.getElementById('inputCaptionTop');
+    const inputCaptionBottom = document.getElementById('inputCaptionBottom');
+    const inputVideoTimer = document.getElementById('inputVideoTimer');
+    const inputSkipText = document.getElementById('inputSkipText');
+
+    // Template Selector buttons
+    const btnSelectSplitVideo = document.getElementById('btnSelectSplitVideo');
+    const btnSelectYoutube = document.getElementById('btnSelectYoutube');
+
+    // Theme and reset buttons
+    const themeToggle = document.getElementById('themeToggle');
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+    const themeText = document.getElementById('themeText');
+    const resetBtn = document.getElementById('resetBtn');
+
+    // Card Elements to Update
+    const labelVideoAds = document.getElementById('labelVideoAds');
+    const footerVideoAdsLink = document.getElementById('footerVideoAdsLink');
+    const previewCampaignName = document.getElementById('previewCampaignName');
+    const previewAdName = document.getElementById('previewAdName');
+    const previewAdDesc = document.getElementById('previewAdDesc');
+
+    const previewStatus = document.getElementById('previewStatus');
+    const previewEligible = document.getElementById('previewEligible');
+    const previewImpressions = document.getElementById('previewImpressions');
+    const previewViews = document.getElementById('previewViews');
+    const previewCol5Value = document.getElementById('previewCol5Value');
+    const paginationIndicator = document.getElementById('paginationIndicator');
+    const campaignDot = document.getElementById('campaignDot');
+    const statusCircle = document.getElementById('statusCircle');
+
+    const headerCol4 = document.getElementById('headerCol4');
+    const headerCol5 = document.getElementById('headerCol5');
+
+    // Thumbnail Mirror & Center Images
+    const youtubeThumbnailImg = document.getElementById('youtubeThumbnailImg');
+    const bgMirrorLeft = document.getElementById('bgMirrorLeft');
+    const bgMirrorRight = document.getElementById('bgMirrorRight');
+    const youtubeFallbackPlaceholder = document.getElementById('youtubeFallbackPlaceholder');
+
+    // Segment elements to hide/show based on active template
+    const mirrorLeft = document.getElementById('mirrorLeft');
+    const mirrorRight = document.getElementById('mirrorRight');
+    const centerCol = document.getElementById('centerCol');
+    const subtitlesOverlay = document.getElementById('subtitlesOverlay');
+    const skipOverlay = document.getElementById('skipOverlay');
+    const timerOverlay = document.getElementById('timerOverlay');
+
+    const splitScreenControls = document.getElementById('splitScreenControls');
+
+    // Dialogue Elements
+    const previewCaptionTop = document.getElementById('previewCaptionTop');
+    const previewCaptionBottom = document.getElementById('previewCaptionBottom');
+    const previewVideoTimer = document.getElementById('previewVideoTimer');
+    const previewSkipText = document.getElementById('previewSkipText');
+
+    const infoTitle = document.getElementById('infoTitle');
+    const infoList = document.getElementById('infoList');
+
+    // Status indicator elements
+    const fetchStatusBadge = document.getElementById('fetchStatusBadge');
+    const fetchStatusIndicator = document.getElementById('fetchStatusIndicator');
+    const fetchStatusText = document.getElementById('fetchStatusText');
+
+    // Helper: Extract Video ID from Youtube URL or keep as is
+    function getYoutubeId(input) {
+      const trimmed = input.trim();
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = trimmed.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : trimmed;
+    }
+
+    // Live oEmbed fetcher to retrieve real YouTube Titles dynamically
+    async function fetchYoutubeMetadata(youtubeUrl) {
+      setFetchStatus("loading", "Fetching...");
+      try {
+        const videoId = getYoutubeId(youtubeUrl);
+        if (!videoId || videoId.length !== 11) {
+          setFetchStatus("error", "Invalid ID");
+          return;
+        }
+
+        // Fetch from standard noembed.com API wrapper (CORS friendly metadata)
+        const targetUrl = `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`;
+        const response = await fetch(targetUrl);
+
+        if (!response.ok) throw new Error("Metadata request failed");
+        const data = await response.json();
+
+        if (data && data.title) {
+          // Success - fill Ad Description field with fetched Video Title
+          inputAdDesc.value = data.title;
+          setFetchStatus("success", "Synced Live");
+          updateLivePreview();
+        } else {
+          throw new Error("No title returned");
+        }
+      } catch (err) {
+        console.warn("Could not retrieve YouTube oEmbed details automatically: ", err);
+        setFetchStatus("error", "Mock Synced");
+      }
+    }
+
+    function setFetchStatus(status, text) {
+      fetchStatusText.textContent = text;
+      if (status === "loading") {
+        fetchStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping";
+        fetchStatusBadge.className = "flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full dark:bg-amber-950/30 dark:text-amber-400";
+      } else if (status === "success") {
+        fetchStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+        fetchStatusBadge.className = "flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full dark:bg-emerald-950/30 dark:text-emerald-400";
+      } else if (status === "error") {
+        fetchStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-rose-500";
+        fetchStatusBadge.className = "flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full dark:bg-rose-950/30 dark:text-rose-400";
+      } else {
+        fetchStatusIndicator.className = "w-1.5 h-1.5 rounded-full bg-gray-400";
+        fetchStatusBadge.className = "flex items-center gap-1 text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full dark:bg-zinc-800 dark:text-zinc-400";
+      }
+    }
+
+    // Bind Image Loading Handlers for perfect UX feedback
+    youtubeThumbnailImg.onload = function () {
+      youtubeThumbnailImg.classList.remove('hidden');
+      youtubeFallbackPlaceholder.classList.add('hidden');
+    };
+
+    youtubeThumbnailImg.onerror = function () {
+      youtubeThumbnailImg.classList.add('hidden');
+      youtubeFallbackPlaceholder.classList.remove('hidden');
+      youtubeFallbackPlaceholder.innerHTML = `
+      <svg class="w-8 h-8 mb-1 text-red-500/85" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+      </svg>
+      <span class="text-[9px] font-bold text-red-400">Invalid ID or Load Failed</span>
+    `;
+    };
+
+    // Two-Way AdSense Calculation System
+    function handleMetricCalculations(triggeredBy) {
+      if (isCalculating) return;
+      isCalculating = true;
+
+      try {
+        let impressions = parseFloat(inputImpressionsVal.value.replace(/,/g, '')) || 0;
+        let views = parseFloat(inputViewsVal.value.replace(/,/g, '')) || 0;
+        let cpv = parseFloat(inputAvgCPVVal.value.replace(/[$,]/g, '')) || 0;
+        let viewRate = parseFloat(inputViewRateVal.value.replace(/[%]/g, '')) || 0;
+        let cost = parseFloat(inputCostVal.value.replace(/[$,]/g, '')) || 0;
+
+        if (triggeredBy === 'primary' || triggeredBy === 'cost') {
+          // Recalculate basic rates
+          if (impressions > 0 && document.activeElement !== inputViewRateVal) {
+            viewRate = (views / impressions) * 100;
+            inputViewRateVal.value = viewRate.toFixed(2) + "%";
+          }
+          if (document.activeElement !== inputCostVal) {
+            cost = views * cpv;
+            inputCostVal.value = "$" + cost.toFixed(2);
+          }
+        } else if (triggeredBy === 'dollar') {
+          // Once dollar-related parameters are customized (Cost or CPV changed)
+          if (cpv > 0) {
+            views = Math.round(cost / cpv);
+            inputViewsVal.value = views.toLocaleString();
+
+            if (impressions > 0) {
+              viewRate = (views / impressions) * 100;
+              inputViewRateVal.value = viewRate.toFixed(2) + "%";
+            }
+          }
+        } else if (triggeredBy === 'viewRate') {
+          // If the user manually overrides the View Rate
+          if (impressions > 0) {
+            views = Math.round((viewRate / 100) * impressions);
+            inputViewsVal.value = views.toLocaleString();
+
+            cost = views * cpv;
+            inputCostVal.value = "$" + cost.toFixed(2);
+          }
+        }
+      } catch (e) {
+        console.warn("Calculation exception", e);
+      } finally {
+        isCalculating = false;
+        updateLivePreview();
+      }
+    }
+
+    // Update Live Preview values
+    function updateLivePreview() {
+      // General Header / Footer Label Customization
+      labelVideoAds.textContent = inputHeaderLabel.value || "Video ads";
+      footerVideoAdsLink.textContent = inputFooterLabel.value || "Video ads";
+
+      // Campaign Name & Ad ID Setup
+      previewCampaignName.textContent = inputCampaignName.value || "Video views";
+      previewAdName.textContent = inputAdName.value || "Ad #1";
+
+      const descVal = inputAdDesc.value;
+      if (descVal && descVal.trim() !== "") {
+        previewAdDesc.textContent = descVal;
+        previewAdDesc.style.display = 'block';
+      } else {
+        previewAdDesc.style.display = 'none';
+      }
+
+      // Column Headers
+      headerCol4.textContent = inputCol4Header.value || "TrueView v...";
+      headerCol5.textContent = inputCol5Header.value || "View rate";
+
+      // Table Row metrics
+      previewStatus.textContent = inputStatusLabel.value || "Enabled";
+      previewEligible.textContent = inputEligibleLabel.value || "Eligible";
+      previewImpressions.textContent = inputImpressionsVal.value || "0";
+      previewViews.textContent = inputViewsVal.value || "0";
+
+      // Sync Col 5 with calculated/overridden View Rate
+      previewCol5Value.textContent = inputViewRateVal.value || "0.00%";
+
+      // Dialogue Overlay values
+      previewCaptionTop.textContent = inputCaptionTop.value;
+      previewCaptionBottom.textContent = inputCaptionBottom.value;
+      previewVideoTimer.textContent = inputVideoTimer.value;
+      previewSkipText.textContent = inputSkipText.value;
+
+      // Pagination indicator mapping
+      paginationIndicator.textContent = `${inputPaginationText.value || "1 / 1"}`;
+
+      // Status Indicator Dot color override
+      const statusDot = inputStatusDot.value;
+      if (statusDot === "Enabled") {
+        campaignDot.className = "w-[7px] h-[7px] rounded-full bg-[#1e8e3e] inline-block";
+        statusCircle.className = "w-[7px] h-[7px] rounded-full bg-[#1e8e3e] flex-shrink-0";
+      } else if (statusDot === "Paused") {
+        campaignDot.className = "w-[7px] h-[7px] rounded-full bg-gray-400 inline-block";
+        statusCircle.className = "w-[7px] h-[7px] rounded-full bg-gray-400 flex-shrink-0";
+      } else {
+        campaignDot.className = "w-[7px] h-[7px] rounded-full bg-red-500 inline-block";
+        statusCircle.className = "w-[7px] h-[7px] rounded-full bg-red-500 flex-shrink-0";
+      }
+
+      // Sync YouTube Link with background covers
+      const cleanVidId = getYoutubeId(inputYoutubeId.value || "dQw4w9WgXcQ");
+      const generatedYoutubeUrl = `https://www.youtube.com/watch?v=${cleanVidId}`;
+      const thumbUrl = `https://img.youtube.com/vi/${cleanVidId}/hqdefault.jpg`;
+
+      if (youtubeThumbnailImg.src !== thumbUrl) {
+        youtubeThumbnailImg.src = thumbUrl;
+        bgMirrorLeft.src = thumbUrl;
+        bgMirrorRight.src = thumbUrl;
+      }
+
+      // Update clickable link attributes globally
+      previewCampaignName.href = generatedYoutubeUrl;
+      footerVideoAdsLink.href = generatedYoutubeUrl;
+
+      // Conditional formatting based on selected Template
+      if (activeTemplate === "split") {
+        // Template 2 active - show vertical mirror columns and overlays
+        mirrorLeft.style.display = 'block';
+        mirrorRight.style.display = 'block';
+        subtitlesOverlay.style.display = 'block';
+        skipOverlay.style.display = 'flex';
+        timerOverlay.style.display = 'block';
+        centerCol.className = "flex-1 h-full relative bg-[#1c1d1f] flex flex-col justify-between overflow-hidden border-x border-black/35";
+        splitScreenControls.classList.remove('hidden');
+
+        infoTitle.textContent = "Template 2 (Portrait Split) Configuration";
+        infoList.innerHTML = `
+          <li><strong>Portrait Video Setup:</strong> Models a vertical split representation with side blur mirror graphics.</li>
+          <li><strong>Interactive Overlays:</strong> Displays live subtitles, active CTA skip button, and customized time code badges.</li>
+        `;
+      } else {
+        // Template 1 active - Widescreen landscape layout
+        mirrorLeft.style.display = 'none';
+        mirrorRight.style.display = 'none';
+        subtitlesOverlay.style.display = 'none';
+        skipOverlay.style.display = 'none';
+        timerOverlay.style.display = 'none';
+        centerCol.className = "flex-1 h-full relative bg-[#1c1d1f] flex flex-col justify-between overflow-hidden";
+        splitScreenControls.classList.add('hidden');
+
+        infoTitle.textContent = "Template 1 (Landscape Standard) Configuration";
+        infoList.innerHTML = `
+          <li><strong>Landscape Card Setup:</strong> Pure, standard 16:9 widescreen layout matching image_af0363.png perfectly.</li>
+          <li><strong>Solid lines under columns:</strong> Thin solid underlines matching image_af0363.png extend under the text and dropdown arrow.</li>
+        `;
+      }
+    }
+
+    // Handle Template toggle updates
+    function setTemplate(mode) {
+      activeTemplate = mode;
+      if (mode === "split") {
+        btnSelectSplitVideo.className = "flex-1 py-1.5 text-[11px] font-bold rounded transition bg-blue-50 text-blue-700 dark:bg-zinc-700 dark:text-blue-400";
+        btnSelectYoutube.className = "flex-1 py-1.5 text-[11px] font-bold rounded transition text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800";
+      } else {
+        btnSelectSplitVideo.className = "flex-1 py-1.5 text-[11px] font-bold rounded transition text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800";
+        btnSelectYoutube.className = "flex-1 py-1.5 text-[11px] font-bold rounded transition bg-blue-50 text-blue-700 dark:bg-zinc-700 dark:text-blue-400";
+      }
+      updateLivePreview();
+    }
+
+    // Debounce mechanism to auto-fetch when URL changes
+    function handleYoutubeIdChange() {
+      updateLivePreview();
+      clearTimeout(fetchDebounceTimer);
+
+      const url = inputYoutubeId.value;
+      if (url.trim() !== "") {
+        fetchDebounceTimer = setTimeout(() => {
+          fetchYoutubeMetadata(url);
+        }, 850);
+      }
+    }
+
+    // Reset simulator defaults
+    function resetToScreenshot() {
+      inputHeaderLabel.value = "Video ads";
+      inputFooterLabel.value = "Video ads";
+      inputCampaignName.value = "Video views - 2025-12-13";
+      inputAdName.value = "Ad #1";
+      inputAdDesc.value = "enjoy the video";
+      inputStatusLabel.value = "Enabled";
+      inputEligibleLabel.value = "Eligible";
+      inputCol4Header.value = "TrueView v...";
+      inputCol5Header.value = "View rate";
+
+      inputImpressionsVal.value = "6,270";
+      inputViewsVal.value = "3,119";
+      inputAvgCPVVal.value = "$0.01";
+      inputViewRateVal.value = "49.74%";
+      inputCostVal.value = "$31.19";
+
+      inputPaginationText.value = "1 / 1";
+      inputStatusDot.value = "Enabled";
+      inputYoutubeId.value = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+
+      inputCaptionTop.value = "AND I JUST WANT";
+      inputCaptionBottom.value = "TO BE BETTER";
+      inputVideoTimer.value = "00:52";
+      inputSkipText.value = "Skip Ad";
+
+      setTemplate("youtube");
+      setFetchStatus("idle", "Idle");
+    }
+
+    // Dark Mode Toggle Logic
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('bg-slate-900');
+      document.body.classList.toggle('text-white', isDark);
+      document.body.classList.toggle('bg-[#f8f9fa]', !isDark);
+      document.body.classList.toggle('text-gray-900', !isDark);
+
+      // Card Element containers
+      const card = document.getElementById('googleAdsCard');
+      const cardHeader = document.getElementById('cardHeader');
+      const cardFooter = document.getElementById('cardFooter');
+      const textSecondaryList = [
+        document.getElementById('previewAdDesc'),
+        document.getElementById('labelVideoAds'),
+        document.getElementById('metricsHeaders'),
+        document.getElementById('configSubheading'),
+        document.getElementById('previewStatusLabel')
+      ];
+
+      // Side control panel adaptation
+      const controlPanel = document.getElementById('configPanel');
+      const headerPanel = document.getElementById('mainHeader');
+
+      if (controlPanel) {
+        controlPanel.classList.toggle('bg-zinc-900', isDark);
+        controlPanel.classList.toggle('border-zinc-800', isDark);
+        controlPanel.classList.toggle('text-zinc-100', isDark);
+        controlPanel.classList.toggle('bg-white', !isDark);
+        controlPanel.classList.toggle('border-gray-200', !isDark);
+        controlPanel.classList.toggle('text-gray-900', !isDark);
+      }
+      if (headerPanel) {
+        headerPanel.classList.toggle('bg-zinc-900', isDark);
+        headerPanel.classList.toggle('border-zinc-800', isDark);
+        headerPanel.classList.toggle('bg-white', !isDark);
+        headerPanel.classList.toggle('border-gray-200', !isDark);
+      }
+
+      // Headers text color matching
+      const brandText = document.getElementById('brandText');
+      const configHeading = document.getElementById('configHeading');
+      if (brandText) brandText.classList.toggle('text-zinc-200', isDark);
+      if (configHeading) configHeading.classList.toggle('text-zinc-100', isDark);
+
+      // Input fields adaptation
+      const inputs = document.querySelectorAll('input, select, textarea');
+      inputs.forEach(el => {
+        el.classList.toggle('bg-zinc-800', isDark);
+        el.classList.toggle('border-zinc-700', isDark);
+        el.classList.toggle('text-white', isDark);
+
+        el.classList.toggle('bg-white', !isDark);
+        el.classList.toggle('border-gray-300', !isDark);
+        el.classList.toggle('text-gray-900', !isDark);
+      });
+
+      if (isDark) {
+        card.className = "google-ads-font w-full max-w-[422px] bg-zinc-950 border border-zinc-800 rounded-[8px] shadow-lg flex flex-col select-none transition-all duration-300 theme-transition";
+        cardHeader.className = "flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900/55 theme-transition";
+        cardFooter.className = "flex items-center justify-between px-4 py-2 border-t border-zinc-800 bg-zinc-950 rounded-b-[8px] theme-transition";
+
+        textSecondaryList.forEach(el => {
+          if (el) {
+            el.classList.remove('text-gray-500');
+            el.classList.add('text-zinc-400');
+          }
+        });
+
+        previewAdName.className = "text-[13px] font-medium text-zinc-100 tracking-tight leading-snug break-words";
+        previewEligible.className = "text-zinc-300 font-normal whitespace-nowrap";
+
+        const valRows = document.querySelectorAll('#metricsValues > div');
+        valRows.forEach(row => {
+          row.classList.add('text-zinc-100');
+          row.classList.remove('text-gray-800');
+        });
+
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+        themeText.textContent = "Light Mode";
+        themeText.className = "font-semibold text-zinc-200";
+        themeToggle.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-700 bg-zinc-800 text-xs font-medium hover:bg-zinc-700 text-zinc-200 transition theme-transition";
+      } else {
+        card.className = "google-ads-font w-full max-w-[422px] bg-white border border-gray-200 rounded-[8px] shadow-sm flex flex-col select-none transition-all duration-300 hover:shadow-md theme-transition";
+        cardHeader.className = "flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white theme-transition";
+        cardFooter.className = "flex items-center justify-between px-4 py-2 border-t border-gray-200 bg-white rounded-b-[8px] theme-transition";
+
+        textSecondaryList.forEach(el => {
+          if (el) {
+            el.classList.add('text-gray-500');
+            el.classList.remove('text-zinc-400');
+          }
+        });
+
+        previewAdName.className = "text-[13px] font-medium text-gray-800 tracking-tight leading-snug break-words";
+        previewEligible.className = "text-gray-700 font-normal whitespace-nowrap";
+
+        const valRows = document.querySelectorAll('#metricsValues > div');
+        valRows.forEach(row => {
+          row.classList.add('text-gray-800');
+          row.classList.remove('text-zinc-100');
+        });
+
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+        themeText.textContent = "Dark Mode";
+        themeText.className = "font-semibold text-gray-700";
+        themeToggle.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-medium hover:bg-gray-100 transition theme-transition";
+      }
+    }
+
+    // Attach Event Listeners to all manual override inputs
+    inputHeaderLabel.addEventListener('input', updateLivePreview);
+    inputFooterLabel.addEventListener('input', updateLivePreview);
+    inputCampaignName.addEventListener('input', updateLivePreview);
+    inputAdName.addEventListener('input', updateLivePreview);
+    inputAdDesc.addEventListener('input', updateLivePreview);
+
+    inputStatusLabel.addEventListener('input', updateLivePreview);
+    inputEligibleLabel.addEventListener('input', updateLivePreview);
+    inputCol4Header.addEventListener('input', updateLivePreview);
+    inputCol5Header.addEventListener('input', updateLivePreview);
+
+    // Numeric Calculations Listeners
+    inputImpressionsVal.addEventListener('input', () => handleMetricCalculations('primary'));
+    inputViewsVal.addEventListener('input', () => handleMetricCalculations('primary'));
+    inputAvgCPVVal.addEventListener('input', () => handleMetricCalculations('primary'));
+
+    // Auto-calculated fields that can be edited/overridden manually
+    inputViewRateVal.addEventListener('input', () => handleMetricCalculations('viewRate'));
+    inputCostVal.addEventListener('input', () => handleMetricCalculations('dollar'));
+
+    inputPaginationText.addEventListener('input', updateLivePreview);
+    inputStatusDot.addEventListener('change', updateLivePreview);
+
+    // Auto-fetch on user link input
+    inputYoutubeId.addEventListener('input', handleYoutubeIdChange);
+    btnForceFetch.addEventListener('click', () => {
+      fetchYoutubeMetadata(inputYoutubeId.value);
+    });
+
+    // Dialogue triggers
+    inputCaptionTop.addEventListener('input', updateLivePreview);
+    inputCaptionBottom.addEventListener('input', updateLivePreview);
+    inputVideoTimer.addEventListener('input', updateLivePreview);
+    inputSkipText.addEventListener('input', updateLivePreview);
+
+    // Selectors
+    btnSelectSplitVideo.addEventListener('click', () => setTemplate("split"));
+    btnSelectYoutube.addEventListener('click', () => setTemplate("youtube"));
+
+    resetBtn.addEventListener('click', resetToScreenshot);
+    themeToggle.addEventListener('click', toggleTheme);
+
+    // Setup exact initial screenshot alignment
+    resetToScreenshot();
+  </script>
+</body>
+
+</html>
